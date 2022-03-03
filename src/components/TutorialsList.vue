@@ -71,11 +71,14 @@ import { defineComponent } from "vue";
 import TutorialDataService from "@/services/TutorialDataService";
 import Tutorial from "@/types/Tutorial";
 import ResponseData from "@/types/ResponseData";
+import {Company,XYZ001IApi} from "@/apiclient/einvoice-sample-spring-client/api";
+import {Configuration} from "@/apiclient/einvoice-sample-spring-client/configuration";
 
 export default defineComponent({
   name: "tutorials-list",
   data() {
     return {
+      Company: [] as Company[],
       tutorials: [] as Tutorial[],
       currentTutorial: {} as Tutorial,
       currentIndex: -1,
@@ -84,14 +87,17 @@ export default defineComponent({
   },
   methods: {
     retrieveTutorials() {
-      TutorialDataService.getAll()
+    let config = new Configuration({basePath:"/proxy"});
+        let client = new XYZ001IApi( config);
+        let response  = client.readCompany("ddd","ddd")
         .then((response: ResponseData) => {
-          this.tutorials = response.data;
-          console.log(response.data);
-        })
-        .catch((e: Error) => {
-          console.log(e);
-        });
+            this.Company = response.data;
+            console.log(response.data);
+            })
+           .catch((e: Error) => {
+             console.log(e);
+           });
+         console.log(response);
     },
 
     refreshList() {
@@ -106,6 +112,7 @@ export default defineComponent({
     },
 
     removeAllTutorials() {
+    /**
       TutorialDataService.deleteAll()
         .then((response: ResponseData) => {
           console.log(response.data);
@@ -114,6 +121,7 @@ export default defineComponent({
         .catch((e: Error) => {
           console.log(e);
         });
+        **/
     },
 
     searchTitle() {
